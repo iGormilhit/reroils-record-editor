@@ -40,6 +40,7 @@ from invenio_records.api import Record
 from invenio_records_rest.utils import obj_or_import_string
 from pkg_resources import resource_string
 
+
 from .babel_extractors import translate
 from .permissions import can_edit, record_edit_permission
 from .utils import delete_record, get_schema, get_schema_url, remove_pid, \
@@ -232,16 +233,20 @@ def permission_denied_page(error):
 
 def init_menu(endpoints):
     """Initialize menu before first request."""
-    item = current_menu.submenu('main.manage')
-    item.register(
-        endpoint=None,
-        text=_('Manage'),
-        visible_when=can_edit,
-        order=0
-    )
+    menu = current_app.config['REROILS_RECORD_EDITOR_BASE_MENU']
+    item = current_menu.submenu(menu, auto_create=False)
+    if not item:
+        item = current_menu.submenu(menu)
+        item.register(
+            endpoint=None,
+            text=_('Manage'),
+            visible_when=can_edit,
+            order=0
+        )
     for record_type in endpoints.keys():
         if endpoints.get(record_type, {}).get('api'):
-            subitem = current_menu.submenu('main.manage.%s' % record_type)
+            data = {'menu': menu, 'type': record_type}
+            subitem = current_menu.submenu('{menu}.{type}'.format(**data))
             icon = '<i class="fa fa-pencil-square-o fa-fw"></i> '
             subitem.register(
                 endpoint='reroils_record_editor.search_%s' % record_type,

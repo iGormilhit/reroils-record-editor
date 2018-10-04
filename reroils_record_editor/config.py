@@ -51,3 +51,6 @@ REROILS_RECORD_EDITOR_TRANSLATE_JSON_KEYS = [
     'title', 'description',
     'validationMessage', 'placeholder'
 ]
+
+REROILS_RECORD_EDITOR_BASE_MENU = 'main.manage1'
+"""Default editor base menu configuration."""
